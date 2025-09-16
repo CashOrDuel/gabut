@@ -19,10 +19,8 @@
       border-radius: 30px; padding: 30px;
       max-width: 500px; width: 90%;
       text-align: center;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
-
-    /* Album art */
     .album-art {
       width: 250px; height: 250px; margin: 0 auto 20px;
       border-radius: 50%; overflow: hidden;
@@ -34,17 +32,17 @@
     .song-title {
       font-family: 'Dancing Script', cursive;
       font-size: 32px;
-      margin-bottom: 5px;
       background: linear-gradient(135deg, #ff6b9d, #feca57);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      margin-bottom: 5px;
     }
     .artist-name { font-weight: 600; margin-bottom: 20px; }
 
-    /* Lyrics */
+    /* === LIRIK === */
     .lyrics-container {
       position: relative;
-      height: 200px;
+      height: 200px; /* tinggi area lirik */
       overflow: hidden;
       border-radius: 15px;
       background: rgba(255,182,193,0.2);
@@ -53,43 +51,41 @@
     }
     .lyrics {
       position: absolute;
+      top: 0;
       width: 100%;
       white-space: pre-line;
       line-height: 1.8;
       color: #8b2a5b;
       font-style: italic;
       text-align: center;
-      top: 100%;
-      animation: scrollLyrics 60s linear forwards;
-      animation-play-state: paused; /* default berhenti */
-    }
-    @keyframes scrollLyrics {
-      0% { top: 100%; }
-      100% { top: -100%; }
+      transition: top 0.2s linear;
     }
 
-    /* Controls */
-    .controls button {
+    /* Kontrol */
+    .control-btn {
       background: linear-gradient(135deg, #ff6b9d, #ff9ff3);
       border: none; border-radius: 50%;
       width: 70px; height: 70px;
       color: white; font-size: 28px;
       cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 <body>
   <div class="music-container">
-    <!-- Foto Album -->
     <div class="album-art">
-      <img src="download.jpg" alt="Album Art">
+        <img src="download.jpg" alt="Album Art">
+    </div> 
+
+    <div class="song-info">
+      <h2 class="song-title">Jadian Yuk</h2>
+      <p class="artist-name">Chloe Pawapua</p>
     </div>
 
-    <h2 class="song-title">Jadian Yuk</h2>
-    <p class="artist-name">Chloe Pawapua</p>
-
     <div class="lyrics-container">
-      <div class="lyrics" id="lyrics">
+      <p class="lyrics" id="lyrics">
+        
 Jadi gemes lihat sikapmu
 Sejak lama kita menyapa
 Penasaran, apa kamu juga menyukaiku?
@@ -116,15 +112,16 @@ Na-na-na, na-na-na-na
 Na-na-na, na-na-na-na
 'Kan kuucapkan lebih dulu
 "Jadian, yuk"
-      </div>
+      </p>
     </div>
 
     <div class="controls">
-      <button id="playBtn"><i class="fas fa-play" id="playIcon"></i></button>
+      <button class="control-btn play-btn" id="playBtn"><i class="fas fa-play" id="playIcon"></i></button>
     </div>
 
     <audio id="audioPlayer" preload="auto">
       <source src="audio/Chloe-Pawapua-Jadian-Yuk.mp3" type="audio/mpeg">
+      Browser Anda tidak mendukung elemen audio.
     </audio>
   </div>
 
@@ -135,30 +132,38 @@ Na-na-na, na-na-na-na
     const playIcon = document.getElementById('playIcon');
     let isPlaying = false;
 
+    let lyricsHeight = 0;
+    let containerHeight = 0;
+
+    window.onload = () => {
+      lyricsHeight = lyrics.scrollHeight;
+      containerHeight = lyrics.parentElement.clientHeight;
+    };
+
     playBtn.addEventListener('click', () => {
       if (isPlaying) {
-        // pause musik + pause animasi
         audio.pause();
-        lyrics.style.animationPlayState = "paused";
         playIcon.classList.replace('fa-pause', 'fa-play');
         isPlaying = false;
       } else {
-        // play musik + lanjut animasi
         audio.play();
-        lyrics.style.animationPlayState = "running";
         playIcon.classList.replace('fa-play', 'fa-pause');
         isPlaying = true;
       }
     });
 
-    // Reset jika musik selesai
+    // Sinkronisasi scroll lirik dengan progress musik
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      const progress = audio.currentTime / audio.duration;
+      const maxScroll = lyricsHeight - containerHeight;
+      lyrics.style.top = (-progress * maxScroll) + "px";
+    });
+
+    // Reset ikon saat musik selesai
     audio.addEventListener('ended', () => {
       playIcon.classList.replace('fa-pause', 'fa-play');
       isPlaying = false;
-      lyrics.style.animation = "none"; // reset animasi
-      lyrics.offsetHeight; // reflow
-      lyrics.style.animation = null;
-      lyrics.style.animationPlayState = "paused";
     });
   </script>
 </body>
