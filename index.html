@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pemutar Musik Cinta</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #ff9a9e 0%, #e28dc7 100%);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      color: #8b2a5b;
+    }
+    .music-container {
+      background: rgba(251, 151, 188, 0.85);
+      border-radius: 30px; padding: 30px;
+      max-width: 500px; width: 90%;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    }
+
+    /* Album art */
+    .album-art {
+      width: 250px; height: 250px; margin: 0 auto 20px;
+      border-radius: 50%; overflow: hidden;
+      box-shadow: 0 15px 40px rgba(139, 42, 91, 0.4);
+      border: 5px solid #ff6b9d;
+    }
+    .album-art img { width: 100%; height: 100%; object-fit: cover; }
+
+    .song-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 32px;
+      margin-bottom: 5px;
+      background: linear-gradient(135deg, #ff6b9d, #feca57);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .artist-name { font-weight: 600; margin-bottom: 20px; }
+
+    /* Lyrics */
+    .lyrics-container {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+      border-radius: 15px;
+      background: rgba(255,182,193,0.2);
+      border: 1px solid rgba(255,182,193,0.5);
+      margin-bottom: 20px;
+    }
+    .lyrics {
+      position: absolute;
+      width: 100%;
+      white-space: pre-line;
+      line-height: 1.8;
+      color: #8b2a5b;
+      font-style: italic;
+      text-align: center;
+      top: 100%;
+      animation: scrollLyrics 60s linear forwards;
+      animation-play-state: paused; /* default berhenti */
+    }
+    @keyframes scrollLyrics {
+      0% { top: 100%; }
+      100% { top: -100%; }
+    }
+
+    /* Controls */
+    .controls button {
+      background: linear-gradient(135deg, #ff6b9d, #ff9ff3);
+      border: none; border-radius: 50%;
+      width: 70px; height: 70px;
+      color: white; font-size: 28px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="music-container">
+    <!-- Foto Album -->
+    <div class="album-art">
+      <img src="download.jpg" alt="Album Art">
+    </div>
+
+    <h2 class="song-title">Jadian Yuk</h2>
+    <p class="artist-name">Chloe Pawapua</p>
+
+    <div class="lyrics-container">
+      <div class="lyrics" id="lyrics">
+Jadi gemes lihat sikapmu
+Sejak lama kita menyapa
+Penasaran, apa kamu juga menyukaiku?
+Dari gerak dan kata-kata
+Satu, dua, kulihat cinta
+Walaupun ini bisa perasaanku saja
+Melihat semua tingkah lakumu
+Kau seperti menginginkanku
+Tapi semuanya 'kan jadi buntu
+Kalau kamu masih batu
+Ha-ah, ayolah
+Lemahkan sedikit egomu
+Dan mendekatlah padaku
+Memang tak perlu buru-buru
+Kar'na yakin pasti perlu waktu
+Sampai saatnya nanti kau siap di hadapanku
+'Kan kuucapkan lebih dulu
+"Jadian, yuk"
+Na-na-na-na, na-na-na
+Na-na-na-na-na, na-na-na
+Aku juga suka kamu
+Hu-uh-uh-uh, uh-uh-uh-uh
+Na-na-na, na-na-na-na
+Na-na-na, na-na-na-na
+'Kan kuucapkan lebih dulu
+"Jadian, yuk"
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="playBtn"><i class="fas fa-play" id="playIcon"></i></button>
+    </div>
+
+    <audio id="audioPlayer" preload="auto">
+      <source src="audio/Chloe-Pawapua-Jadian-Yuk.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <script>
+    const audio = document.getElementById('audioPlayer');
+    const lyrics = document.getElementById('lyrics');
+    const playBtn = document.getElementById('playBtn');
+    const playIcon = document.getElementById('playIcon');
+    let isPlaying = false;
+
+    playBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        // pause musik + pause animasi
+        audio.pause();
+        lyrics.style.animationPlayState = "paused";
+        playIcon.classList.replace('fa-pause', 'fa-play');
+        isPlaying = false;
+      } else {
+        // play musik + lanjut animasi
+        audio.play();
+        lyrics.style.animationPlayState = "running";
+        playIcon.classList.replace('fa-play', 'fa-pause');
+        isPlaying = true;
+      }
+    });
+
+    // Reset jika musik selesai
+    audio.addEventListener('ended', () => {
+      playIcon.classList.replace('fa-pause', 'fa-play');
+      isPlaying = false;
+      lyrics.style.animation = "none"; // reset animasi
+      lyrics.offsetHeight; // reflow
+      lyrics.style.animation = null;
+      lyrics.style.animationPlayState = "paused";
+    });
+  </script>
+</body>
+</html>
